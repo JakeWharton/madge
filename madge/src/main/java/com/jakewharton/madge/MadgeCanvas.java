@@ -20,8 +20,6 @@ final class MadgeCanvas extends Canvas {
   private static final int DEFAULT_COLOR = 0x88FF0088;
 
   private final Map<Bitmap, Bitmap> cache = new WeakHashMap<>();
-  private final Rect tempSrc = new Rect();
-  private final RectF tempDst = new RectF();
   private final int size;
 
   private Bitmap grid;
@@ -31,6 +29,10 @@ final class MadgeCanvas extends Canvas {
     DisplayMetrics displayMetrics = context.getResources().getDisplayMetrics();
     size = Math.max(displayMetrics.widthPixels, displayMetrics.heightPixels);
     setColor(DEFAULT_COLOR);
+  }
+
+  public void clearCache() {
+    cache.clear();
   }
 
   public void setColor(int color) {
@@ -46,6 +48,8 @@ final class MadgeCanvas extends Canvas {
         }
       }
     }
+
+    clearCache();
   }
 
   @Override public boolean isHardwareAccelerated() {

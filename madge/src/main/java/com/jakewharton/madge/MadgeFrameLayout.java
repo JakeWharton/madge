@@ -33,12 +33,22 @@ public final class MadgeFrameLayout extends FrameLayout {
     canvasDelegate.setColor(color);
   }
 
+  public boolean isOverlayEnabled() {
+    return enabled;
+  }
+
   public void setOverlayEnabled(boolean enabled) {
     if (enabled != this.enabled) {
       if (Build.VERSION.SDK_INT >= HONEYCOMB) {
         layerize(enabled);
       }
       this.enabled = enabled;
+
+      if (!enabled) {
+        canvasDelegate.clearCache();
+      }
+
+      invalidate();
     }
   }
 
@@ -49,10 +59,6 @@ public final class MadgeFrameLayout extends FrameLayout {
     } else {
       setLayerType(View.LAYER_TYPE_NONE, null);
     }
-  }
-
-  public boolean isEnabled() {
-    return enabled;
   }
 
   @Override protected boolean drawChild(Canvas canvas, View child, long drawingTime) {
