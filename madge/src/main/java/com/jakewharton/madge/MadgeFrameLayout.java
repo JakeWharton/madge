@@ -33,6 +33,10 @@ public final class MadgeFrameLayout extends FrameLayout {
     canvasDelegate.setColor(color);
   }
 
+  public void setOverlayDrawRatioEnabled(boolean drawRatioEnabled) {
+    canvasDelegate.setDrawScaleValueEnabled(drawRatioEnabled);
+  }
+
   public boolean isOverlayEnabled() {
     return enabled;
   }
