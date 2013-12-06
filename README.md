@@ -18,7 +18,7 @@ Grab the [JAR][2] or add a dependency from Maven central:
 
 ```groovy
 dependencies {
-  debugCompile 'com.jakewharton.madge:madge:1.0.0'
+  debugCompile 'com.jakewharton.madge:madge:1.0.1'
 }
 ```
 
