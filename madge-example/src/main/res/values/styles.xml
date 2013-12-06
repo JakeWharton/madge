@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+  <style name="Theme.Madge" parent="android:Theme.NoTitleBar">
+    <item name="android:windowBackground">@drawable/bg</item>
+  </style>
+</resources>

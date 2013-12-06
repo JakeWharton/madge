@@ -1,0 +1,2 @@
+include ':madge'
+include ':madge-example'

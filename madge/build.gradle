@@ -1,0 +1,22 @@
+buildscript {
+  dependencies {
+    classpath 'com.android.tools.build:gradle:0.6.+'
+  }
+}
+
+apply plugin: 'android-library'
+
+dependencies {
+}
+
+android {
+  compileSdkVersion 19
+  buildToolsVersion '19.0.0'
+
+  compileOptions {
+    sourceCompatibility JavaVersion.VERSION_1_7
+    targetCompatibility JavaVersion.VERSION_1_7
+  }
+}
+
+apply from: 'https://raw.github.com/chrisbanes/gradle-mvn-push/master/gradle-mvn-push.gradle'
