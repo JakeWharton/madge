@@ -65,15 +65,16 @@ public final class MadgeFrameLayout extends FrameLayout {
     if (!enabled) {
       return super.drawChild(canvas, child, drawingTime);
     }
+    MadgeCanvas delegate = canvasDelegate;
     try {
-      canvasDelegate.delegate = canvas;
-      return super.drawChild(canvasDelegate, child, drawingTime);
+      delegate.setDelegate(canvas);
+      return super.drawChild(delegate, child, drawingTime);
     } finally {
-      canvasDelegate.delegate = null;
+      delegate.clearDelegate();
     }
   }
 
   @Override public boolean isHardwareAccelerated() {
-    return !enabled;
+    return !enabled && super.isHardwareAccelerated();
   }
 }
