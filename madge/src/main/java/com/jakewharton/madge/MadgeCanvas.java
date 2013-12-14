@@ -72,10 +72,8 @@ final class MadgeCanvas extends DelegateCanvas {
     delegateMatrix.getValues(matrix);
 
     // 1. canvas matrix
-    float scaleX = (float) Math.sqrt(matrix[Matrix.MSCALE_X] * matrix[Matrix.MSCALE_X]
-        + matrix[Matrix.MSKEW_Y] * matrix[Matrix.MSKEW_Y]);
-    float scaleY = (float) Math.sqrt(matrix[Matrix.MSCALE_Y] * matrix[Matrix.MSCALE_Y]
-        + matrix[Matrix.MSKEW_X] * matrix[Matrix.MSKEW_X]);
+    float scaleX = (float) Math.hypot(matrix[Matrix.MSCALE_X], matrix[Matrix.MSKEW_Y]);
+    float scaleY = (float) Math.hypot(matrix[Matrix.MSCALE_Y], matrix[Matrix.MSKEW_X]);
 
     // 2. user input
     scaleX *= inputScaleX;
