@@ -15,6 +15,7 @@ import java.util.WeakHashMap;
 /** A {@link Canvas} which overlays a colored pixel grid on any {@link Bitmap} drawn. */
 final class MadgeCanvas extends DelegateCanvas {
   private static final int DEFAULT_COLOR = 0x88FF0088;
+  private static final int TEXT_SIZE_DP = 16;
 
   private final Map<Bitmap, Bitmap> cache = new WeakHashMap<>();
   private final int size;
@@ -33,6 +34,7 @@ final class MadgeCanvas extends DelegateCanvas {
     size = Math.max(displayMetrics.widthPixels, displayMetrics.heightPixels);
     setColor(DEFAULT_COLOR);
     scaleValuePaint.setTextAlign(Paint.Align.CENTER);
+    scaleValuePaint.setTextSize(TEXT_SIZE_DP * displayMetrics.density);
   }
 
   public void clearCache() {
@@ -61,6 +63,7 @@ final class MadgeCanvas extends DelegateCanvas {
 
     // inverse grid color
     scaleValuePaint.setColor(~color | 0xFF000000);
+    scaleValuePaint.setShadowLayer(2, -1, 1, color);
   }
 
   @SuppressWarnings("deprecation")
