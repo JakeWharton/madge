@@ -1,6 +1,13 @@
 Change Log
 ==========
 
+Version 1.1.0 *(2014-01-03)*
+----------------------------
+
+ * New: Option to draw the scale ratio as text on top of the pixel grid. Control with
+   `setOverlayRatioEnabled`.
+
+
 Version 1.0.1 *(2013-12-05)*
 ----------------------------
 
