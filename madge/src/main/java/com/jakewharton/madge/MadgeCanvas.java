@@ -18,7 +18,7 @@ import static android.graphics.Paint.Align.CENTER;
 /** A {@link Canvas} which overlays a colored pixel grid on any {@link Bitmap} drawn. */
 final class MadgeCanvas extends DelegateCanvas {
   private static final int DEFAULT_COLOR = 0x88FF0088;
-  private static final int TEXT_SIZE_DP = 16;
+  private static final int TEXT_SIZE_DP = 14;
 
   private final Map<Bitmap, Bitmap> cache = new WeakHashMap<>();
   private final int size;
@@ -26,6 +26,7 @@ final class MadgeCanvas extends DelegateCanvas {
   private final Matrix delegateMatrix = new Matrix();
   private final float[] delegateMatrixValues = new float[9];
   private final Paint scaleValuePaint = new Paint(ANTI_ALIAS_FLAG);
+  private final float scaleValueOffset;
 
   private Bitmap grid;
 
@@ -37,7 +38,9 @@ final class MadgeCanvas extends DelegateCanvas {
     size = Math.max(displayMetrics.widthPixels, displayMetrics.heightPixels);
     setColor(DEFAULT_COLOR);
     scaleValuePaint.setTextAlign(CENTER);
-    scaleValuePaint.setTextSize(TEXT_SIZE_DP * displayMetrics.density);
+    float scaleValueTextSize = TEXT_SIZE_DP * displayMetrics.density;
+    scaleValuePaint.setTextSize(scaleValueTextSize);
+    scaleValueOffset = scaleValueTextSize / 2;
   }
 
   public void clearCache() {
@@ -103,8 +106,13 @@ final class MadgeCanvas extends DelegateCanvas {
         ? String.valueOf(scaleX) //
         : scaleX + " x " + scaleY;
 
-    drawText(text, bitmap.getWidth() / 2 * inputScaleX + offsetX,
-        bitmap.getHeight() / 2 * inputScaleY + offsetY, scaleValuePaint);
+    int save = save();
+
+    scale(1f / scaleX, 1f / scaleY);
+    drawText(text, scaleX * bitmap.getWidth() / 2 + offsetX,
+        scaleY * bitmap.getHeight() / 2 + offsetY + scaleValueOffset, scaleValuePaint);
+
+    restoreToCount(save);
   }
 
   private Bitmap overlayPixels(Bitmap bitmap) {
