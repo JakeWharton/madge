@@ -32,9 +32,10 @@ final class MadgeCanvas extends DelegateCanvas {
   private final Paint scaleValuePaintStroke = new Paint(ANTI_ALIAS_FLAG);
   private final float scaleValueOffset;
 
+  private int color;
   private Bitmap grid;
 
-  private boolean drawScaleValueEnabled;
+  private boolean overlayRatioEnabled;
 
   public MadgeCanvas(Context context) {
     super(false);
@@ -60,11 +61,20 @@ final class MadgeCanvas extends DelegateCanvas {
     cache.clear();
   }
 
-  public void setDrawScaleValueEnabled(boolean drawScaleValueEnabled) {
-    this.drawScaleValueEnabled = drawScaleValueEnabled;
+  public void setOverlayRatioEnabled(boolean overlayRatioEnabled) {
+    this.overlayRatioEnabled = overlayRatioEnabled;
+  }
+
+  public boolean isOverlayRatioEnabled() {
+    return overlayRatioEnabled;
   }
 
   public void setColor(int color) {
+    if (this.color == color) {
+      return; // Nothing to do.
+    }
+    this.color = color;
+
     if (grid != null) {
       grid.recycle();
     }
@@ -87,6 +97,10 @@ final class MadgeCanvas extends DelegateCanvas {
     hsv[0] += 210; // Move color to split complementary (180 + 30)...
     hsv[0] %= 360; // Keep it in the color space.
     scaleValuePaintFill.setColor(Color.HSVToColor(hsv));
+  }
+
+  public int getColor() {
+    return color;
   }
 
   @SuppressWarnings("deprecation")
@@ -151,14 +165,14 @@ final class MadgeCanvas extends DelegateCanvas {
 
   @Override public void drawBitmap(Bitmap bitmap, float left, float top, Paint paint) {
     super.drawBitmap(overlayPixels(bitmap), left, top, paint);
-    if (drawScaleValueEnabled) {
+    if (overlayRatioEnabled) {
       drawScaleValue(bitmap, 1, 1, 0, 0);
     }
   }
 
   @Override public void drawBitmap(Bitmap bitmap, Rect src, RectF dst, Paint paint) {
     super.drawBitmap(overlayPixels(bitmap), src, dst, paint);
-    if (drawScaleValueEnabled) {
+    if (overlayRatioEnabled) {
       float srcWidth = src != null ? src.width() : bitmap.getWidth();
       float srcHeight = src != null ? src.height() : bitmap.getHeight();
       float dstWidth = dst != null ? dst.width() : bitmap.getWidth();
@@ -171,7 +185,7 @@ final class MadgeCanvas extends DelegateCanvas {
 
   @Override public void drawBitmap(Bitmap bitmap, Rect src, Rect dst, Paint paint) {
     super.drawBitmap(overlayPixels(bitmap), src, dst, paint);
-    if (drawScaleValueEnabled) {
+    if (overlayRatioEnabled) {
       float srcWidth = src != null ? src.width() : bitmap.getWidth();
       float srcHeight = src != null ? src.height() : bitmap.getHeight();
       float dstWidth = dst != null ? dst.width() : bitmap.getWidth();

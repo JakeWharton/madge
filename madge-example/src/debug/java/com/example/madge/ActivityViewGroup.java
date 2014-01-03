@@ -8,7 +8,7 @@ public final class ActivityViewGroup {
   public static ViewGroup get(Activity activity) {
     MadgeFrameLayout madge = new MadgeFrameLayout(activity);
     madge.setOverlayEnabled(true);
-    madge.setOverlayDrawRatioEnabled(true);
+    madge.setOverlayRatioEnabled(true);
     activity.setContentView(madge);
     return madge;
   }

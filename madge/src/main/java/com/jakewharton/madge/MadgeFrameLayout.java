@@ -29,18 +29,27 @@ public final class MadgeFrameLayout extends FrameLayout {
     canvasDelegate = new MadgeCanvas(context);
   }
 
+  /** Set the color for the pixel grid overlay. */
   public void setOverlayColor(int color) {
     canvasDelegate.setColor(color);
   }
 
-  public void setOverlayDrawRatioEnabled(boolean drawRatioEnabled) {
-    canvasDelegate.setDrawScaleValueEnabled(drawRatioEnabled);
+  /** The color used by the pixel grid overlay. */
+  public int getOverlayColor() {
+    return canvasDelegate.getColor();
   }
 
-  public boolean isOverlayEnabled() {
-    return enabled;
+  /** Set whether the scale ratio will be drawn as text on top of the pixel grid. */
+  public void setOverlayRatioEnabled(boolean overlayRatioEnabled) {
+    canvasDelegate.setOverlayRatioEnabled(overlayRatioEnabled);
   }
 
+  /** Returns true if the scale ratio is drawing on top of the pixel grid. */
+  public boolean isOverlayRatioEnabled() {
+    return canvasDelegate.isOverlayRatioEnabled();
+  }
+
+  /** Set whether the pixel grid overlay is enabled. */
   public void setOverlayEnabled(boolean enabled) {
     if (enabled != this.enabled) {
       if (Build.VERSION.SDK_INT >= HONEYCOMB) {
@@ -54,6 +63,11 @@ public final class MadgeFrameLayout extends FrameLayout {
 
       invalidate();
     }
+  }
+
+  /** Returns true if the pixel grid overlay is enabled. */
+  public boolean isOverlayEnabled() {
+    return enabled;
   }
 
   @TargetApi(HONEYCOMB)
