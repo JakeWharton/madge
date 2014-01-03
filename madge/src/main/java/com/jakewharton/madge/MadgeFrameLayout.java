@@ -78,6 +78,7 @@ public final class MadgeFrameLayout extends FrameLayout {
     }
   }
 
+  @TargetApi(HONEYCOMB)
   @Override public boolean isHardwareAccelerated() {
     return !enabled && super.isHardwareAccelerated();
   }
