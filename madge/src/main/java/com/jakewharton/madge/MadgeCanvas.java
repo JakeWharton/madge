@@ -3,6 +3,7 @@ package com.jakewharton.madge;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
+import android.graphics.Color;
 import android.graphics.Matrix;
 import android.graphics.Paint;
 import android.graphics.Rect;
@@ -14,6 +15,8 @@ import java.util.WeakHashMap;
 
 import static android.graphics.Paint.ANTI_ALIAS_FLAG;
 import static android.graphics.Paint.Align.CENTER;
+import static android.graphics.Paint.Style.FILL;
+import static android.graphics.Paint.Style.STROKE;
 
 /** A {@link Canvas} which overlays a colored pixel grid on any {@link Bitmap} drawn. */
 final class MadgeCanvas extends DelegateCanvas {
@@ -25,7 +28,8 @@ final class MadgeCanvas extends DelegateCanvas {
 
   private final Matrix delegateMatrix = new Matrix();
   private final float[] delegateMatrixValues = new float[9];
-  private final Paint scaleValuePaint = new Paint(ANTI_ALIAS_FLAG);
+  private final Paint scaleValuePaintFill = new Paint(ANTI_ALIAS_FLAG);
+  private final Paint scaleValuePaintStroke = new Paint(ANTI_ALIAS_FLAG);
   private final float scaleValueOffset;
 
   private Bitmap grid;
@@ -37,10 +41,19 @@ final class MadgeCanvas extends DelegateCanvas {
     DisplayMetrics displayMetrics = context.getResources().getDisplayMetrics();
     size = Math.max(displayMetrics.widthPixels, displayMetrics.heightPixels);
     setColor(DEFAULT_COLOR);
-    scaleValuePaint.setTextAlign(CENTER);
+
     float scaleValueTextSize = TEXT_SIZE_DP * displayMetrics.density;
-    scaleValuePaint.setTextSize(scaleValueTextSize);
     scaleValueOffset = scaleValueTextSize / 2;
+
+    scaleValuePaintFill.setTextAlign(CENTER);
+    scaleValuePaintFill.setStyle(FILL);
+    scaleValuePaintFill.setTextSize(scaleValueTextSize);
+
+    scaleValuePaintStroke.setTextAlign(CENTER);
+    scaleValuePaintStroke.setStyle(STROKE);
+    scaleValuePaintStroke.setStrokeWidth(scaleValueTextSize * 0.10f); // 10% stroke.
+    scaleValuePaintStroke.setTextSize(scaleValueTextSize);
+    scaleValuePaintStroke.setAlpha(0x66); // 40% opacity.
   }
 
   public void clearCache() {
@@ -67,9 +80,13 @@ final class MadgeCanvas extends DelegateCanvas {
 
     clearCache();
 
-    // inverse grid color
-    scaleValuePaint.setColor(~color | 0xFF000000);
-    scaleValuePaint.setShadowLayer(2, -1, 1, color);
+    scaleValuePaintStroke.setColor(color);
+
+    float[] hsv = new float[3];
+    Color.colorToHSV(color, hsv);
+    hsv[0] += 210; // Move color to split complementary (180 + 30)...
+    hsv[0] %= 360; // Keep it in the color space.
+    scaleValuePaintFill.setColor(Color.HSVToColor(hsv));
   }
 
   @SuppressWarnings("deprecation")
@@ -110,7 +127,9 @@ final class MadgeCanvas extends DelegateCanvas {
 
     scale(1f / scaleX, 1f / scaleY);
     drawText(text, scaleX * bitmap.getWidth() / 2 + offsetX,
-        scaleY * bitmap.getHeight() / 2 + offsetY + scaleValueOffset, scaleValuePaint);
+        scaleY * bitmap.getHeight() / 2 + offsetY + scaleValueOffset, scaleValuePaintStroke);
+    drawText(text, scaleX * bitmap.getWidth() / 2 + offsetX,
+        scaleY * bitmap.getHeight() / 2 + offsetY + scaleValueOffset, scaleValuePaintFill);
 
     restoreToCount(save);
   }
