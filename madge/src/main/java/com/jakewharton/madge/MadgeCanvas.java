@@ -12,6 +12,9 @@ import android.util.DisplayMetrics;
 import java.util.Map;
 import java.util.WeakHashMap;
 
+import static android.graphics.Paint.ANTI_ALIAS_FLAG;
+import static android.graphics.Paint.Align.CENTER;
+
 /** A {@link Canvas} which overlays a colored pixel grid on any {@link Bitmap} drawn. */
 final class MadgeCanvas extends DelegateCanvas {
   private static final int DEFAULT_COLOR = 0x88FF0088;
@@ -22,7 +25,7 @@ final class MadgeCanvas extends DelegateCanvas {
 
   private final Matrix delegateMatrix = new Matrix();
   private final float[] delegateMatrixValues = new float[9];
-  private final Paint scaleValuePaint = new Paint(Paint.ANTI_ALIAS_FLAG);
+  private final Paint scaleValuePaint = new Paint(ANTI_ALIAS_FLAG);
 
   private Bitmap grid;
 
@@ -33,7 +36,7 @@ final class MadgeCanvas extends DelegateCanvas {
     DisplayMetrics displayMetrics = context.getResources().getDisplayMetrics();
     size = Math.max(displayMetrics.widthPixels, displayMetrics.heightPixels);
     setColor(DEFAULT_COLOR);
-    scaleValuePaint.setTextAlign(Paint.Align.CENTER);
+    scaleValuePaint.setTextAlign(CENTER);
     scaleValuePaint.setTextSize(TEXT_SIZE_DP * displayMetrics.density);
   }
 
