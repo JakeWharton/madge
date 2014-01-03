@@ -64,7 +64,8 @@ final class MadgeCanvas extends DelegateCanvas {
   }
 
   @SuppressWarnings("deprecation")
-  private void drawScaleValue(Bitmap bitmap, float inputScaleX, float inputScaleY, int offsetX, int offsetY) {
+  private void drawScaleValue(Bitmap bitmap, float inputScaleX, float inputScaleY, int offsetX,
+      int offsetY) {
     // Note: although this method is deprecated,
     //       it seems to work well when hardware acceleration is not used
     getMatrix(delegateMatrix);
@@ -92,8 +93,8 @@ final class MadgeCanvas extends DelegateCanvas {
     scaleX = (int) (scaleX * precision) / precision;
     scaleY = (int) (scaleY * precision) / precision;
 
-    String text = Math.abs(scaleX - scaleY) < 1 / precision
-        ? String.valueOf(scaleX)
+    String text = Math.abs(scaleX - scaleY) < 1 / precision //
+        ? String.valueOf(scaleX) //
         : scaleX + " x " + scaleY;
 
     drawText(text, bitmap.getWidth() / 2 * inputScaleX + offsetX,
@@ -155,8 +156,8 @@ final class MadgeCanvas extends DelegateCanvas {
   }
 
   @Override
-  public void drawBitmap(int[] colors, int offset, int stride, int x, int y, int width,
-      int height, boolean hasAlpha, Paint paint) {
+  public void drawBitmap(int[] colors, int offset, int stride, int x, int y, int width, int height,
+      boolean hasAlpha, Paint paint) {
     super.drawBitmap(colors, offset, stride, x, y, width, height, hasAlpha, paint);
   }
 }
