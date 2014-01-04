@@ -1,6 +1,12 @@
 Change Log
 ==========
 
+Version 1.1.1 *(2014-01-03)*
+----------------------------
+
+ * Fix: Invalidate view when changing whether the scale ratio is enabled.
+
+
 Version 1.1.0 *(2014-01-03)*
 ----------------------------
 

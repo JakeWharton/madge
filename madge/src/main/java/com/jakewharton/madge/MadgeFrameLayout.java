@@ -42,6 +42,7 @@ public final class MadgeFrameLayout extends FrameLayout {
   /** Set whether the scale ratio will be drawn as text on top of the pixel grid. */
   public void setOverlayRatioEnabled(boolean overlayRatioEnabled) {
     canvasDelegate.setOverlayRatioEnabled(overlayRatioEnabled);
+    invalidate(); // Trigger a re-draw so we see the scale text.
   }
 
   /** Returns true if the scale ratio is drawing on top of the pixel grid. */
@@ -61,7 +62,7 @@ public final class MadgeFrameLayout extends FrameLayout {
         canvasDelegate.clearCache();
       }
 
-      invalidate();
+      invalidate(); // Trigger a re-draw so we see the grid.
     }
   }
 
