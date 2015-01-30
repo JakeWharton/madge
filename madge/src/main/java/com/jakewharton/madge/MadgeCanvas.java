@@ -9,10 +9,12 @@ import android.graphics.Paint;
 import android.graphics.Rect;
 import android.graphics.RectF;
 import android.util.DisplayMetrics;
-
+import java.nio.ByteBuffer;
 import java.util.Map;
 import java.util.WeakHashMap;
 
+import static android.graphics.Bitmap.Config.ALPHA_8;
+import static android.graphics.Bitmap.Config.ARGB_8888;
 import static android.graphics.Paint.ANTI_ALIAS_FLAG;
 import static android.graphics.Paint.Align.CENTER;
 import static android.graphics.Paint.Style.FILL;
@@ -22,27 +24,25 @@ import static android.graphics.Paint.Style.STROKE;
 final class MadgeCanvas extends DelegateCanvas {
   private static final int DEFAULT_COLOR = 0x88FF0088;
   private static final int TEXT_SIZE_DP = 14;
+  private static final int GRID_SIZE_PX = 512;
 
   private final Map<Bitmap, Bitmap> cache = new WeakHashMap<>();
-  private final int size;
 
   private final Matrix delegateMatrix = new Matrix();
   private final float[] delegateMatrixValues = new float[9];
+  private final Paint colorPaint = new Paint();
   private final Paint scaleValuePaintFill = new Paint(ANTI_ALIAS_FLAG);
   private final Paint scaleValuePaintStroke = new Paint(ANTI_ALIAS_FLAG);
   private final float scaleValueOffset;
 
-  private int color;
   private Bitmap grid;
-
   private boolean overlayRatioEnabled;
 
   public MadgeCanvas(Context context) {
     super(false);
-    DisplayMetrics displayMetrics = context.getResources().getDisplayMetrics();
-    size = Math.max(displayMetrics.widthPixels, displayMetrics.heightPixels);
     setColor(DEFAULT_COLOR);
 
+    DisplayMetrics displayMetrics = context.getResources().getDisplayMetrics();
     float scaleValueTextSize = TEXT_SIZE_DP * displayMetrics.density;
     scaleValueOffset = scaleValueTextSize / 2;
 
@@ -70,18 +70,9 @@ final class MadgeCanvas extends DelegateCanvas {
   }
 
   public void setColor(int color) {
-    if (this.color == color) {
-      return; // Nothing to do.
-    }
-    this.color = color;
-
-    if (grid != null) {
-      grid.recycle();
-      grid = null; // Force re-initialize on next use.
-    }
-
     clearCache();
 
+    colorPaint.setColor(color);
     scaleValuePaintStroke.setColor(color);
 
     float[] hsv = new float[3];
@@ -96,18 +87,20 @@ final class MadgeCanvas extends DelegateCanvas {
       return; // Nothing to do.
     }
 
-    grid = Bitmap.createBitmap(size, size, Bitmap.Config.ARGB_8888);
-    for (int i = 0; i < size; i++) {
-      for (int j = 0; j < size; j++) {
-        if (i % 2 == j % 2) {
-          grid.setPixel(i, j, color);
-        }
+    ByteBuffer buffer = ByteBuffer.allocateDirect(GRID_SIZE_PX * GRID_SIZE_PX);
+    for (int i = 0; i < GRID_SIZE_PX; i++) {
+      for (int j = 0; j < GRID_SIZE_PX; j++) {
+        buffer.put(i % 2 == j % 2 ? (byte) 0xFF : 0);
       }
     }
+    buffer.flip();
+
+    grid = Bitmap.createBitmap(GRID_SIZE_PX, GRID_SIZE_PX, ALPHA_8);
+    grid.copyPixelsFromBuffer(buffer);
   }
 
   public int getColor() {
-    return color;
+    return colorPaint.getColor();
   }
 
   @SuppressWarnings("deprecation")
@@ -164,7 +157,7 @@ final class MadgeCanvas extends DelegateCanvas {
     // Create the replacement bitmap of the same size.
     int height = bitmap.getHeight();
     int width = bitmap.getWidth();
-    replacement = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888);
+    replacement = Bitmap.createBitmap(width, height, ARGB_8888);
     Canvas canvas = new Canvas(replacement);
 
     // Draw the original into the replacement.
@@ -174,7 +167,7 @@ final class MadgeCanvas extends DelegateCanvas {
     initializeGrid();
     for (int left = 0; left < width; left += grid.getWidth()) {
       for (int top = 0; top < height; top += grid.getHeight()) {
-        canvas.drawBitmap(grid, left, top, null);
+        canvas.drawBitmap(grid, left, top, colorPaint);
       }
     }
 
