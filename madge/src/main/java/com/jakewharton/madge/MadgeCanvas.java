@@ -160,14 +160,27 @@ final class MadgeCanvas extends DelegateCanvas {
     if (replacement != null) {
       return replacement;
     }
-    initializeGrid();
+
+    // Create the replacement bitmap of the same size.
     int height = bitmap.getHeight();
     int width = bitmap.getWidth();
     replacement = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888);
     Canvas canvas = new Canvas(replacement);
+
+    // Draw the original into the replacement.
     canvas.drawBitmap(bitmap, 0, 0, null);
-    canvas.drawBitmap(grid, 0, 0, null);
+
+    // Tile the grid over the entire size of the bitmap.
+    initializeGrid();
+    for (int left = 0; left < width; left += grid.getWidth()) {
+      for (int top = 0; top < height; top += grid.getHeight()) {
+        canvas.drawBitmap(grid, left, top, null);
+      }
+    }
+
+    // Cache the replacement so subsequent frames do not have to pay the cost of creation.
     cache.put(bitmap, replacement);
+
     return replacement;
   }
 
