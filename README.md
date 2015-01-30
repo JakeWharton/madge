@@ -18,7 +18,7 @@ Grab the [JAR][2] or add a dependency from Maven central:
 
 ```groovy
 dependencies {
-  debugCompile 'com.jakewharton.madge:madge:1.1.1'
+  debugCompile 'com.jakewharton.madge:madge:1.1.2'
 }
 ```
 
@@ -43,4 +43,4 @@ License
 
 
  [1]: http://youtu.be/wat8Xn2pc84
- [2]: http://repository.sonatype.org/service/local/artifact/maven/redirect?r=central-proxy&g=com.jakewharton.madge&a=madge&v=LATEST&c=jar
+ [2]: https://search.maven.org/remote_content?g=com.jakewharton.madge&a=madge&v=LATEST&c=jar

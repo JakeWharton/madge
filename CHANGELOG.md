@@ -1,6 +1,15 @@
 Change Log
 ==========
 
+Version 1.1.2 *(2015-01-30)*
+----------------------------
+
+ * Fix: Use a more efficient size and allocation for the grid. This reduces memory consumption of
+   the layout by over 90% with no adverse performance effects.
+ * Fix: Tile the grid to ensure we cover the entire bitmap size.
+ * Fix: Do not allocate large bitmap unless actually enabled.
+
+
 Version 1.1.1 *(2014-01-03)*
 ----------------------------
 
