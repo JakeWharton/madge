@@ -77,15 +77,7 @@ final class MadgeCanvas extends DelegateCanvas {
 
     if (grid != null) {
       grid.recycle();
-    }
-
-    grid = Bitmap.createBitmap(size, size, Bitmap.Config.ARGB_8888);
-    for (int i = 0; i < size; i++) {
-      for (int j = 0; j < size; j++) {
-        if (i % 2 == j % 2) {
-          grid.setPixel(i, j, color);
-        }
-      }
+      grid = null; // Force re-initialize on next use.
     }
 
     clearCache();
@@ -97,6 +89,21 @@ final class MadgeCanvas extends DelegateCanvas {
     hsv[0] += 210; // Move color to split complementary (180 + 30)...
     hsv[0] %= 360; // Keep it in the color space.
     scaleValuePaintFill.setColor(Color.HSVToColor(hsv));
+  }
+
+  private void initializeGrid() {
+    if (grid != null) {
+      return; // Nothing to do.
+    }
+
+    grid = Bitmap.createBitmap(size, size, Bitmap.Config.ARGB_8888);
+    for (int i = 0; i < size; i++) {
+      for (int j = 0; j < size; j++) {
+        if (i % 2 == j % 2) {
+          grid.setPixel(i, j, color);
+        }
+      }
+    }
   }
 
   public int getColor() {
@@ -153,6 +160,7 @@ final class MadgeCanvas extends DelegateCanvas {
     if (replacement != null) {
       return replacement;
     }
+    initializeGrid();
     int height = bitmap.getHeight();
     int width = bitmap.getWidth();
     replacement = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888);
