@@ -2,6 +2,7 @@ package com.jakewharton.madge;
 
 import android.content.Context;
 import android.graphics.Bitmap;
+import android.graphics.BitmapShader;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Matrix;
@@ -19,28 +20,38 @@ import static android.graphics.Paint.ANTI_ALIAS_FLAG;
 import static android.graphics.Paint.Align.CENTER;
 import static android.graphics.Paint.Style.FILL;
 import static android.graphics.Paint.Style.STROKE;
+import static android.graphics.Shader.TileMode.REPEAT;
 
 /** A {@link Canvas} which overlays a colored pixel grid on any {@link Bitmap} drawn. */
 final class MadgeCanvas extends DelegateCanvas {
   private static final int DEFAULT_COLOR = 0x88FF0088;
   private static final int TEXT_SIZE_DP = 14;
-  private static final int GRID_SIZE_PX = 512;
 
   private final Map<Bitmap, Bitmap> cache = new WeakHashMap<>();
 
   private final Matrix delegateMatrix = new Matrix();
   private final float[] delegateMatrixValues = new float[9];
-  private final Paint colorPaint = new Paint();
+  private final Paint checkerboardPaint = new Paint();
   private final Paint scaleValuePaintFill = new Paint(ANTI_ALIAS_FLAG);
   private final Paint scaleValuePaintStroke = new Paint(ANTI_ALIAS_FLAG);
   private final float scaleValueOffset;
 
-  private Bitmap grid;
   private boolean overlayRatioEnabled;
 
   public MadgeCanvas(Context context) {
     super(false);
     setColor(DEFAULT_COLOR);
+
+    // Create a 2x2 checkerboard alpha pattern in a shader.
+    ByteBuffer buffer = ByteBuffer.allocateDirect(4);
+    buffer.put(0, (byte) 0xFF);
+    buffer.put(1, (byte) 0x00);
+    buffer.put(2, (byte) 0x00);
+    buffer.put(3, (byte) 0xFF);
+    Bitmap checker = Bitmap.createBitmap(2, 2, ALPHA_8);
+    checker.copyPixelsFromBuffer(buffer);
+    BitmapShader shader = new BitmapShader(checker, REPEAT, REPEAT);
+    checkerboardPaint.setShader(shader);
 
     DisplayMetrics displayMetrics = context.getResources().getDisplayMetrics();
     float scaleValueTextSize = TEXT_SIZE_DP * displayMetrics.density;
@@ -72,7 +83,7 @@ final class MadgeCanvas extends DelegateCanvas {
   public void setColor(int color) {
     clearCache();
 
-    colorPaint.setColor(color);
+    checkerboardPaint.setColor(color);
     scaleValuePaintStroke.setColor(color);
 
     float[] hsv = new float[3];
@@ -82,25 +93,8 @@ final class MadgeCanvas extends DelegateCanvas {
     scaleValuePaintFill.setColor(Color.HSVToColor(hsv));
   }
 
-  private void initializeGrid() {
-    if (grid != null) {
-      return; // Nothing to do.
-    }
-
-    ByteBuffer buffer = ByteBuffer.allocateDirect(GRID_SIZE_PX * GRID_SIZE_PX);
-    for (int i = 0; i < GRID_SIZE_PX; i++) {
-      for (int j = 0; j < GRID_SIZE_PX; j++) {
-        buffer.put(i % 2 == j % 2 ? (byte) 0xFF : 0);
-      }
-    }
-    buffer.flip();
-
-    grid = Bitmap.createBitmap(GRID_SIZE_PX, GRID_SIZE_PX, ALPHA_8);
-    grid.copyPixelsFromBuffer(buffer);
-  }
-
   public int getColor() {
-    return colorPaint.getColor();
+    return checkerboardPaint.getColor();
   }
 
   @SuppressWarnings("deprecation")
@@ -164,12 +158,7 @@ final class MadgeCanvas extends DelegateCanvas {
     canvas.drawBitmap(bitmap, 0, 0, null);
 
     // Tile the grid over the entire size of the bitmap.
-    initializeGrid();
-    for (int left = 0; left < width; left += grid.getWidth()) {
-      for (int top = 0; top < height; top += grid.getHeight()) {
-        canvas.drawBitmap(grid, left, top, colorPaint);
-      }
-    }
+    canvas.drawRect(0, 0, width, height, checkerboardPaint);
 
     // Cache the replacement so subsequent frames do not have to pay the cost of creation.
     cache.put(bitmap, replacement);
@@ -208,17 +197,5 @@ final class MadgeCanvas extends DelegateCanvas {
       int offsetY = dst != null ? dst.top : 0;
       drawScaleValue(bitmap, dstWidth / srcWidth, dstHeight / srcHeight, offsetX, offsetY);
     }
-  }
-
-  @Override
-  public void drawBitmap(int[] colors, int offset, int stride, float x, float y, int width,
-      int height, boolean hasAlpha, Paint paint) {
-    super.drawBitmap(colors, offset, stride, x, y, width, height, hasAlpha, paint);
-  }
-
-  @Override
-  public void drawBitmap(int[] colors, int offset, int stride, int x, int y, int width, int height,
-      boolean hasAlpha, Paint paint) {
-    super.drawBitmap(colors, offset, stride, x, y, width, height, hasAlpha, paint);
   }
 }
