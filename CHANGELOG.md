@@ -1,6 +1,12 @@
 Change Log
 ==========
 
+Version 1.1.3 *(2016-02-20)*
+----------------------------
+
+ * Fix: Use a BitmapShader to draw the pixel grid making initialization instant
+
+
 Version 1.1.2 *(2015-01-30)*
 ----------------------------
 
