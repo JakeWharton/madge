@@ -1,2 +1,4 @@
+rootProject.name = 'madge-parent'
+
 include ':madge'
 include ':madge-example'
