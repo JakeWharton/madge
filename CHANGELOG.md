@@ -1,6 +1,12 @@
 Change Log
 ==========
 
+Version 1.1.4 *(2016-07-06)*
+----------------------------
+
+ * Fix: Correct the scale text positioning when a Bitmap is drawn at an offset.
+
+
 Version 1.1.3 *(2016-02-20)*
 ----------------------------
 

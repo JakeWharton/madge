@@ -14,11 +14,9 @@ the device.
 Download
 --------
 
-Grab the [JAR][2] or add a dependency from Maven central:
-
 ```groovy
 dependencies {
-  debugCompile 'com.jakewharton.madge:madge:1.1.3'
+  debugCompile 'com.jakewharton.madge:madge:1.1.4'
 }
 ```
 
