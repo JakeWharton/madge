@@ -25,4 +25,7 @@
       android:layout_marginTop="60dp"
       android:src="@drawable/app_icon"
       />
+  <com.example.madge.FooView
+      android:layout_width="match_parent"
+      android:layout_height="100dp" />
 </LinearLayout>
