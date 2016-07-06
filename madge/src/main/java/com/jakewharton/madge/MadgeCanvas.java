@@ -169,7 +169,7 @@ final class MadgeCanvas extends DelegateCanvas {
   @Override public void drawBitmap(Bitmap bitmap, float left, float top, Paint paint) {
     super.drawBitmap(overlayPixels(bitmap), left, top, paint);
     if (overlayRatioEnabled) {
-      drawScaleValue(bitmap, 1, 1, 0, 0);
+      drawScaleValue(bitmap, 1, 1, (int)left, (int)top);
     }
   }
 
